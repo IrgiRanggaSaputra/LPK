@@ -1,0 +1,120 @@
+.register-section {
+  position: relative;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-bg-white);
+}
+
+.register-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.register-info h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+.register-info h2 span {
+  color: var(--color-accent-gold);
+}
+
+.register-info p {
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 2rem;
+}
+
+.register-benefits {
+  list-style: none;
+}
+
+.register-benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.register-benefit-icon {
+  color: var(--color-accent-gold);
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.register-form-card {
+  background-color: var(--color-bg-white);
+  color: var(--color-text-dark);
+  padding: 3rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-primary);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-border);
+  background-color: var(--color-bg-light);
+  outline: none;
+  transition: var(--transition-normal);
+}
+
+.form-control:focus {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg-white);
+  box-shadow: 0 0 0 4px rgba(15, 44, 89, 0.1);
+}
+
+.form-note {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.form-status {
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.form-status.success {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.form-status.error {
+  background-color: rgba(216, 0, 50, 0.1);
+  color: var(--color-accent-red);
+  border: 1px solid rgba(216, 0, 50, 0.2);
+}
+
+@media (max-width: 992px) {
+  .register-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .register-form-card {
+    padding: 2rem;
+  }
+}
