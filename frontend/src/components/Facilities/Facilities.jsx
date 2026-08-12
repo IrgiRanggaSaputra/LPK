@@ -1,6 +1,89 @@
-import React from 'react';
-import { Home, Compass, GraduationCap, Users } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Home, Compass, GraduationCap } from 'lucide-react';
 import './Facilities.css';
+
+// Import local images for Asrama
+import asrama1 from '../../images/asrama/asrama1.png';
+import asrama2 from '../../images/asrama/asrama2.png';
+import asrama3 from '../../images/asrama/asrama3.png';
+
+// Import local images for Kelas
+import kelas1 from '../../images/kelas/kelas1.png';
+import kelas2 from '../../images/kelas/kelas2.png';
+import kelas3 from '../../images/kelas/kelas3.png';
+
+// Import local images for Mushola
+import mushola1 from '../../images/mushola/mushola1.png';
+import mushola2 from '../../images/mushola/mushola2.png';
+
+// Autoplay Slideshow Sub-component
+const AutoplaySlideshow = ({ images, alt = "Fasilitas", interval = 3500 }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (!images || images.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, interval);
+    return () => clearInterval(timer);
+  }, [images, interval]);
+
+  if (!images || images.length === 0) return null;
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+      {images.map((img, index) => (
+        <img
+          key={index}
+          src={img}
+          alt={`${alt} slide ${index + 1}`}
+          className="facility-img"
+          style={{
+            position: index === 0 ? 'relative' : 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: currentIndex === index ? 1 : 0,
+            transition: 'opacity 0.8s ease-in-out',
+            zIndex: currentIndex === index ? 2 : 1
+          }}
+        />
+      ))}
+      
+      {/* Slide dots indicators */}
+      {images.length > 1 && (
+        <div style={{
+          position: 'absolute',
+          bottom: '12px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          gap: '6px',
+          zIndex: 3,
+          backgroundColor: 'rgba(15, 44, 89, 0.4)',
+          padding: '4px 8px',
+          borderRadius: '10px',
+          backdropFilter: 'blur(2px)'
+        }}>
+          {images.map((_, index) => (
+            <span
+              key={index}
+              style={{
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                backgroundColor: currentIndex === index ? 'var(--color-bg-white)' : 'rgba(255,255,255,0.4)',
+                transition: 'all 0.3s ease'
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function Facilities() {
   const items = [
@@ -8,25 +91,19 @@ export default function Facilities() {
       title: "Asrama Pembiasaan Karakter",
       desc: "Lebih dari sekadar tempat beristirahat yang bersih dan nyaman. Asrama LPK adalah laboratorium pembiasaan karakter. Di sini, peserta berlatih hidup mandiri, menerapkan budaya kebersihan berkelompok, bangun tepat waktu, dan disiplin merawat lingkungan harian ala Jepang.",
       icon: <Home size={22} />,
-      img: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=400&auto=format&fit=crop"
-    },
-    {
-      title: "Mushola Nyaman & Asri",
-      desc: "Ketenangan spiritual adalah kunci ketangguhan mental. Kami menyediakan Mushola yang bersih, rapi, dan sejuk di lingkungan LPK untuk memudahkan para peserta melaksanakan ibadah tepat waktu secara berjamaah, menjaga keseimbangan spiritual selama masa pendidikan intensif.",
-      icon: <Compass size={22} />,
-      img: "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?q=80&w=400&auto=format&fit=crop"
+      images: [asrama1, asrama2, asrama3]
     },
     {
       title: "Ruang Kelas Audio Visual AC",
       desc: "Proses belajar bahasa Jepang menjadi menyenangkan dan efektif. Ruang kelas kami dirancang modern dengan pendingin ruangan (AC), alat bantu audio-visual interaktif untuk melatih pendengaran (Choukai), serta modul belajar terstruktur guna memastikan kelulusan ujian kompetensi bahasa Jepang (JFT/JLPT).",
       icon: <GraduationCap size={22} />,
-      img: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80&w=400&auto=format&fit=crop"
+      images: [kelas1, kelas2, kelas3]
     },
     {
-      title: "Aula Serbaguna & Rapat",
-      desc: "Tempat bertemunya kolaborasi, evaluasi, dan transparansi. Aula ini berfungsi sebagai pusat koordinasi harian, tempat briefing keberangkatan, ujian berkala, serta wadah sosialisasi perkembangan belajar calon peserta secara berkala kepada orang tua.",
-      icon: <Users size={22} />,
-      img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=400&auto=format&fit=crop"
+      title: "Mushola Nyaman & Asri",
+      desc: "Ketenangan spiritual adalah kunci ketangguhan mental. Kami menyediakan Mushola yang bersih, rapi, dan sejuk di lingkungan LPK untuk memudahkan para peserta melaksanakan ibadah tepat waktu secara berjamaah, menjaga keseimbangan spiritual selama masa pendidikan intensif.",
+      icon: <Compass size={22} />,
+      images: [mushola1, mushola2]
     }
   ];
 
@@ -45,12 +122,8 @@ export default function Facilities() {
       <div className="facilities-grid">
         {items.map((facility, idx) => (
           <div key={idx} className="facility-card animate-slide-up" style={{ animationDelay: `${idx * 0.1}s` }}>
-            <div className="facility-img-wrapper">
-              <img 
-                src={facility.img} 
-                alt={facility.title} 
-                className="facility-img"
-              />
+            <div className="facility-img-wrapper" style={{ height: '220px', position: 'relative' }}>
+              <AutoplaySlideshow images={facility.images} alt={facility.title} />
             </div>
             
             <div className="facility-body">

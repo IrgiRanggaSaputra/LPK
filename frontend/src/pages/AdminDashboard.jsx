@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoImg from '../images/kiyoraka.png';
 import {
@@ -36,11 +36,27 @@ export default function AdminDashboard() {
     image_url: ''
   });
   const [editingId, setEditingId] = useState(null); // ID of article being updated
+  const [newsFile, setNewsFile] = useState(null);
+  const newsFileRef = useRef(null);
 
   // State for Registrants Listing
   const [registrantsList, setRegistrantsList] = useState([]);
   const [registrantsLoading, setRegistrantsLoading] = useState(false);
   const [selectedRegistrant, setSelectedRegistrant] = useState(null); // For detail modal
+
+  // State for Testimonials CRUD
+  const [testimonialsList, setTestimonialsList] = useState([]);
+  const [testimonialsLoading, setTestimonialsLoading] = useState(false);
+  const [testimonialFormData, setTestimonialFormData] = useState({
+    name: '',
+    city: '',
+    program: '',
+    quote: '',
+    avatar: ''
+  });
+  const [editingTestimonialId, setEditingTestimonialId] = useState(null);
+  const [testimonialFile, setTestimonialFile] = useState(null);
+  const testimonialFileRef = useRef(null);
 
   // Global UI feedback states
   const [notification, setNotification] = useState({ type: '', message: '' });
@@ -54,6 +70,7 @@ export default function AdminDashboard() {
     } else {
       fetchNews();
       fetchRegistrants();
+      fetchTestimonials();
     }
   }, [navigate]);
 
@@ -107,6 +124,18 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleNewsFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 3 * 1024 * 1024) {
+        alert('File terlalu besar! Ukuran maksimal file adalah 3MB.');
+        e.target.value = null;
+        return;
+      }
+      setNewsFile(file);
+    }
+  };
+
   const handleNewsSubmit = async (e) => {
     e.preventDefault();
     setBtnLoading(true);
@@ -125,10 +154,25 @@ export default function AdminDashboard() {
 
       const method = isEdit ? 'PUT' : 'POST';
 
+      const data = new FormData();
+      data.append('title', newsFormData.title);
+      data.append('content', newsFormData.content);
+      data.append('category', newsFormData.category);
+      data.append('image_url', newsFormData.image_url);
+      if (newsFile) {
+        data.append('news_image', newsFile);
+      }
+
+      const headers = {};
+      const token = localStorage.getItem('adminToken');
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(url, {
         method,
-        headers: getAuthHeaders(),
-        body: JSON.stringify(newsFormData)
+        headers,
+        body: data
       });
 
       if (response.status === 401) {
@@ -144,6 +188,8 @@ export default function AdminDashboard() {
         // Reset form
         setNewsFormData({ title: '', content: '', category: 'Tips & Trik', image_url: '' });
         setEditingId(null);
+        setNewsFile(null);
+        if (newsFileRef.current) newsFileRef.current.value = "";
 
         // Reload list
         fetchNews();
@@ -166,11 +212,15 @@ export default function AdminDashboard() {
       category: article.category,
       image_url: article.image_url
     });
+    setNewsFile(null);
+    if (newsFileRef.current) newsFileRef.current.value = "";
   };
 
   const handleCancelEdit = () => {
     setEditingId(null);
     setNewsFormData({ title: '', content: '', category: 'Tips & Trik', image_url: '' });
+    setNewsFile(null);
+    if (newsFileRef.current) newsFileRef.current.value = "";
   };
 
   const handleDeleteClick = async (id) => {
@@ -194,6 +244,156 @@ export default function AdminDashboard() {
         fetchNews();
       } else {
         triggerNotification('error', result.message || 'Gagal menghapus berita.');
+      }
+    } catch (err) {
+      console.error(err);
+      triggerNotification('error', 'Koneksi ke backend terputus.');
+    }
+  };
+
+  /* ==========================================================================
+     TESTIMONIALS CRUD API INTERACTIONS
+     ========================================================================== */
+  const fetchTestimonials = async () => {
+    setTestimonialsLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/testimoni');
+      const result = await response.json();
+      if (response.ok && result.success) {
+        setTestimonialsList(result.data);
+      } else {
+        triggerNotification('error', 'Gagal memuat daftar testimoni.');
+      }
+    } catch (err) {
+      console.error(err);
+      triggerNotification('error', 'Koneksi ke backend bermasalah.');
+    } finally {
+      setTestimonialsLoading(false);
+    }
+  };
+
+  const handleTestimonialFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 3 * 1024 * 1024) {
+        alert('File terlalu besar! Ukuran maksimal file adalah 3MB.');
+        e.target.value = null;
+        return;
+      }
+      setTestimonialFile(file);
+    }
+  };
+
+  const handleTestimonialSubmit = async (e) => {
+    e.preventDefault();
+    setBtnLoading(true);
+
+    if (!testimonialFormData.name.trim() || !testimonialFormData.quote.trim()) {
+      triggerNotification('error', 'Nama dan isi testimoni wajib diisi.');
+      setBtnLoading(false);
+      return;
+    }
+
+    try {
+      const isEdit = editingTestimonialId !== null;
+      const url = isEdit
+        ? `http://localhost:5000/api/testimoni/${editingTestimonialId}`
+        : 'http://localhost:5000/api/testimoni';
+
+      const method = isEdit ? 'PUT' : 'POST';
+
+      const data = new FormData();
+      data.append('name', testimonialFormData.name.trim());
+      data.append('city', testimonialFormData.city.trim());
+      data.append('program', testimonialFormData.program.trim());
+      data.append('quote', testimonialFormData.quote.trim());
+      data.append('avatar', testimonialFormData.avatar.trim());
+      if (testimonialFile) {
+        data.append('avatar_image', testimonialFile);
+      }
+
+      const headers = {};
+      const token = localStorage.getItem('adminToken');
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(url, {
+        method,
+        headers,
+        body: data
+      });
+
+      if (response.status === 401) {
+        handleAuthError();
+        return;
+      }
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        triggerNotification('success', isEdit ? 'Testimoni berhasil diperbarui!' : 'Testimoni berhasil ditambahkan!');
+
+        // Reset form
+        setTestimonialFormData({ name: '', city: '', program: '', quote: '', avatar: '' });
+        setEditingTestimonialId(null);
+        setTestimonialFile(null);
+        if (testimonialFileRef.current) testimonialFileRef.current.value = "";
+
+        // Reload list
+        fetchTestimonials();
+      } else {
+        triggerNotification('error', result.message || 'Gagal menyimpan testimoni.');
+      }
+    } catch (err) {
+      console.error(err);
+      triggerNotification('error', 'Gagal menghubungi server.');
+    } finally {
+      setBtnLoading(false);
+    }
+  };
+
+  const handleTestimonialEditClick = (testi) => {
+    setEditingTestimonialId(testi.id);
+    setTestimonialFormData({
+      name: testi.name,
+      city: testi.city,
+      program: testi.program,
+      quote: testi.quote,
+      avatar: testi.avatar
+    });
+    setTestimonialFile(null);
+    if (testimonialFileRef.current) testimonialFileRef.current.value = "";
+  };
+
+  const handleTestimonialCancelEdit = () => {
+    setEditingTestimonialId(null);
+    setTestimonialFormData({ name: '', city: '', program: '', quote: '', avatar: '' });
+    setTestimonialFile(null);
+    if (testimonialFileRef.current) testimonialFileRef.current.value = "";
+  };
+
+  const handleTestimonialDeleteClick = async (id) => {
+    if (!window.confirm('Apakah Anda yakin ingin menghapus testimoni ini?')) return;
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/testimoni/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+
+      if (response.status === 401) {
+        handleAuthError();
+        return;
+      }
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        triggerNotification('success', 'Testimoni berhasil dihapus.');
+        fetchTestimonials();
+      } else {
+        triggerNotification('error', result.message || 'Gagal menghapus testimoni.');
       }
     } catch (err) {
       console.error(err);
@@ -419,6 +619,16 @@ export default function AdminDashboard() {
               <p>Total Berita</p>
             </div>
           </div>
+
+          <div className="admin-stat-card">
+            <div className="admin-stat-icon gold">
+              <FileText size={24} />
+            </div>
+            <div className="admin-stat-info">
+              <h3>{testimonialsList.length}</h3>
+              <p>Total Testimoni</p>
+            </div>
+          </div>
         </div>
 
         {/* Tabs switcher */}
@@ -437,6 +647,14 @@ export default function AdminDashboard() {
           >
             <Users size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
             Daftar Pendaftar
+          </button>
+
+          <button
+            onClick={() => setActiveTab('testimonials')}
+            className={`admin-tab-btn ${activeTab === 'testimonials' ? 'active' : ''}`}
+          >
+            <FileText size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+            Kelola Testimoni
           </button>
         </div>
 
@@ -465,23 +683,9 @@ export default function AdminDashboard() {
                     required
                   />
                 </div>
-
                 {/* Grid image and category */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '1rem' }}>
-
-                  {/* Cover Image URL */}
-                  <div className="form-group">
-                    <label className="form-label" htmlFor="image_url">URL Gambar Cover</label>
-                    <input
-                      type="url"
-                      id="image_url"
-                      className="form-control"
-                      placeholder="https://images.unsplash.com/..."
-                      value={newsFormData.image_url}
-                      onChange={(e) => setNewsFormData(prev => ({ ...prev, image_url: e.target.value }))}
-                    />
-                  </div>
-
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                  
                   {/* Category Selection */}
                   <div className="form-group">
                     <label className="form-label" htmlFor="category">Kategori</label>
@@ -497,6 +701,40 @@ export default function AdminDashboard() {
                       <option value="Pelepasan">Pelepasan</option>
                       <option value="Kegiatan LPK">Kegiatan LPK</option>
                     </select>
+                  </div>
+
+                  {/* Cover Image Upload / URL Selector */}
+                  <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                    <label className="form-label">Gambar Cover Berita</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1rem', border: '1px dashed var(--color-border)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-bg-light)' }}>
+                      <div>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 'bold', display: 'block', marginBottom: '0.4rem', color: 'var(--color-primary)' }}>Pilihan 1: Upload File Gambar</span>
+                        <input
+                          type="file"
+                          accept=".jpg,.jpeg,.png"
+                          onChange={handleNewsFileChange}
+                          ref={newsFileRef}
+                          className="form-control"
+                          style={{ padding: '0.4rem', fontSize: '0.85rem' }}
+                        />
+                      </div>
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', fontSize: '0.8rem' }}>
+                        <span>— ATAU —</span>
+                      </div>
+
+                      <div>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 'bold', display: 'block', marginBottom: '0.4rem', color: 'var(--color-primary)' }}>Pilihan 2: Gunakan URL Gambar</span>
+                        <input
+                          type="url"
+                          id="image_url"
+                          className="form-control"
+                          placeholder="https://images.unsplash.com/..."
+                          value={newsFormData.image_url}
+                          onChange={(e) => setNewsFormData(prev => ({ ...prev, image_url: e.target.value }))}
+                        />
+                      </div>
+                    </div>
                   </div>
 
                 </div>
@@ -631,7 +869,8 @@ export default function AdminDashboard() {
                     <tr>
                       <th>No</th>
                       <th>Nama Lengkap</th>
-                      <th>Usia / JK</th>
+                      <th>Usia</th>
+                      <th>Jenis Kelamin</th>
                       <th>No. WhatsApp</th>
                       <th>Pendidikan (Jurusan)</th>
                       <th>Job Diinginkan</th>
@@ -644,7 +883,8 @@ export default function AdminDashboard() {
                       <tr key={item.id}>
                         <td style={{ fontWeight: 'bold' }}>{idx + 1}</td>
                         <td style={{ fontWeight: '700', color: 'var(--color-primary)' }}>{item.name}</td>
-                        <td>{item.age} Thn / {item.gender === 'Laki-laki' ? 'L' : 'P'}</td>
+                        <td>{item.age} Tahun</td>
+                        <td>{item.gender}</td>
                         <td style={{ fontWeight: '600' }}>{item.whatsapp}</td>
                         <td>{item.last_education} ({item.major})</td>
                         <td>
@@ -684,6 +924,186 @@ export default function AdminDashboard() {
                 </table>
               </div>
             )}
+
+          </div>
+        )}
+
+        {/* Tab 3: Testimonial CRUD Management */}
+        {activeTab === 'testimonials' && (
+          <div className="admin-workspace-grid">
+
+            {/* Left Side: Form to Create/Edit */}
+            <div className="admin-card">
+              <h2>{editingTestimonialId ? 'Edit Testimoni' : 'Tulis Testimoni Baru'}</h2>
+              <p className="admin-card-subtitle">
+                {editingTestimonialId ? 'Modifikasi testimoni terpilih kemudian klik Simpan.' : 'Testimoni ini akan langsung ditayangkan di halaman utama website.'}
+              </p>
+
+              <form onSubmit={handleTestimonialSubmit}>
+                {/* Author Name */}
+                <div className="form-group">
+                  <label className="form-label" htmlFor="testi_name">Nama Lengkap Alumni</label>
+                  <input
+                    type="text"
+                    id="testi_name"
+                    className="form-control"
+                    placeholder="Contoh: Ahmad Fauzi"
+                    value={testimonialFormData.name}
+                    onChange={(e) => setTestimonialFormData(prev => ({ ...prev, name: e.target.value }))}
+                    required
+                  />
+                </div>
+
+                {/* Grid program & city */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  {/* City */}
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="testi_city">Kota Penempatan (Jepang)</label>
+                    <input
+                      type="text"
+                      id="testi_city"
+                      className="form-control"
+                      placeholder="Contoh: Tokyo, Jepang"
+                      value={testimonialFormData.city}
+                      onChange={(e) => setTestimonialFormData(prev => ({ ...prev, city: e.target.value }))}
+                      required
+                    />
+                  </div>
+
+                  {/* Program */}
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="testi_program">Program & Angkatan</label>
+                    <input
+                      type="text"
+                      id="testi_program"
+                      className="form-control"
+                      placeholder="Contoh: Alumni Magang Otomotif (2024)"
+                      value={testimonialFormData.program}
+                      onChange={(e) => setTestimonialFormData(prev => ({ ...prev, program: e.target.value }))}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Avatar Image Selection */}
+                <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                  <label className="form-label">Foto Profil / Avatar Alumni</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1rem', border: '1px dashed var(--color-border)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-bg-light)' }}>
+                    <div>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 'bold', display: 'block', marginBottom: '0.4rem', color: 'var(--color-primary)' }}>Pilihan 1: Upload Foto Avatar</span>
+                      <input
+                        type="file"
+                        accept=".jpg,.jpeg,.png"
+                        onChange={handleTestimonialFileChange}
+                        ref={testimonialFileRef}
+                        className="form-control"
+                        style={{ padding: '0.4rem', fontSize: '0.85rem' }}
+                      />
+                    </div>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', fontSize: '0.8rem' }}>
+                      <span>— ATAU —</span>
+                    </div>
+
+                    <div>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 'bold', display: 'block', marginBottom: '0.4rem', color: 'var(--color-primary)' }}>Pilihan 2: Gunakan URL Gambar</span>
+                      <input
+                        type="url"
+                        className="form-control"
+                        placeholder="https://images.unsplash.com/..."
+                        value={testimonialFormData.avatar}
+                        onChange={(e) => setTestimonialFormData(prev => ({ ...prev, avatar: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quote Content */}
+                <div className="form-group">
+                  <label className="form-label" htmlFor="testi_quote">Pernyataan Testimoni / Pengalaman Alumni</label>
+                  <textarea
+                    id="testi_quote"
+                    className="form-control"
+                    rows="4"
+                    placeholder="Tulis kutipan sukses alumni..."
+                    value={testimonialFormData.quote}
+                    onChange={(e) => setTestimonialFormData(prev => ({ ...prev, quote: e.target.value }))}
+                    required
+                    style={{ resize: 'vertical' }}
+                  ></textarea>
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                  <button type="submit" className="btn btn-primary" disabled={btnLoading} style={{ flexGrow: 1 }}>
+                    {btnLoading ? (
+                      <>
+                        <Loader2 className="animate-spin" size={18} />
+                        Menyimpan...
+                      </>
+                    ) : (
+                      <>
+                        {editingTestimonialId ? <Check size={18} /> : <Plus size={18} />}
+                        {editingTestimonialId ? 'Perbarui Testimoni' : 'Terbitkan Testimoni'}
+                      </>
+                    )}
+                  </button>
+
+                  {editingTestimonialId && (
+                    <button type="button" onClick={handleTestimonialCancelEdit} className="btn btn-outline" style={{ borderColor: 'var(--color-accent-red)', color: 'var(--color-accent-red)' }}>
+                      Batal
+                    </button>
+                  )}
+                </div>
+
+              </form>
+            </div>
+
+            {/* Right Side: List of Current Testimonials */}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ color: 'var(--color-primary)', fontWeight: 800 }}>Daftar Testimoni Aktif</h3>
+                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>{testimonialsList.length} Item</span>
+              </div>
+
+              {testimonialsLoading ? (
+                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                  <Loader2 className="animate-spin" size={32} style={{ margin: '0 auto', color: 'var(--color-primary)' }} />
+                  <p style={{ marginTop: '0.5rem', fontSize: '0.85rem' }}>Memuat data...</p>
+                </div>
+              ) : testimonialsList.length === 0 ? (
+                <div className="empty-state">
+                  <FileText className="empty-state-icon" size={40} />
+                  <p>Belum ada testimoni yang ditambahkan.</p>
+                </div>
+              ) : (
+                <div className="admin-news-list">
+                  {testimonialsList.map((testi) => (
+                    <div key={testi.id} className="admin-news-item">
+                      <img src={testi.avatar} alt={testi.name} className="admin-news-img" style={{ borderRadius: '50%', width: '70px', height: '70px' }} />
+                      <div className="admin-news-details">
+                        <span className="admin-news-cat">{testi.city}</span>
+                        <h4 className="admin-news-title" style={{ margin: 0 }}>{testi.name}</h4>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>{testi.program}</p>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-dark)', fontStyle: 'italic', marginBottom: '0.75rem', lineHeight: '1.4' }}>
+                          "{testi.quote.length > 80 ? testi.quote.substring(0, 80) + '...' : testi.quote}"
+                        </p>
+                        <div className="admin-news-actions">
+                          <button onClick={() => handleTestimonialEditClick(testi)} className="btn btn-secondary btn-mini">
+                            <Edit3 size={12} />
+                            Edit
+                          </button>
+                          <button onClick={() => handleTestimonialDeleteClick(testi.id)} className="btn btn-outline btn-mini" style={{ borderColor: 'var(--color-accent-red)', color: 'var(--color-accent-red)' }}>
+                            <Trash2 size={12} />
+                            Hapus
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
           </div>
         )}

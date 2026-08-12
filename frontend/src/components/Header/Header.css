@@ -60,11 +60,11 @@
 
 .nav-menu {
   display: flex;
-  gap: 2rem;
+  gap: 1.15rem;
 }
 
 .nav-link {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-primary);
   position: relative;
@@ -100,6 +100,15 @@
   font-size: 1.5rem;
 }
 
+@media (max-width: 1100px) {
+  .nav-menu {
+    gap: 0.8rem;
+  }
+  .nav-link {
+    font-size: 0.85rem;
+  }
+}
+
 @media (max-width: 768px) {
   .nav-menu {
     display: none;
@@ -123,3 +132,171 @@
 .header.scrolled .logo-img {
   height: 45px;
 }
+
+/* ==========================================================================
+   GOOGLE TRANSLATE CUSTOM STYLE OVERRIDES
+   ========================================================================== */
+#google_translate_element {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Style the outer simple element container */
+.goog-te-gadget-simple {
+  background-color: var(--color-bg-white) !important;
+  border: 1px solid var(--color-border) !important;
+  padding: 0.4rem 0.75rem !important;
+  border-radius: var(--radius-sm) !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  color: var(--color-primary) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.25rem;
+  cursor: pointer !important;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease !important;
+}
+
+.goog-te-gadget-simple:hover {
+  border-color: var(--color-accent-gold) !important;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Hide the default Google translation icon and text logos */
+.goog-te-gadget-simple img,
+.goog-te-gadget-icon,
+.goog-te-menu-value img {
+  display: none !important;
+}
+
+.goog-te-menu-value span {
+  color: var(--color-primary) !important;
+  font-size: 0.85rem !important;
+}
+
+/* Style the arrow icon or text separator */
+.goog-te-menu-value span:nth-child(3) {
+  border-left: 1px solid var(--color-border) !important;
+  margin-left: 6px !important;
+  padding-left: 6px !important;
+  color: var(--color-accent-red) !important;
+}
+
+/* Completely hide the Google Translate Top Bar frame ONLY */
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner,
+iframe.goog-te-banner-frame {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+}
+
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+html {
+  margin-top: 0px !important;
+}
+
+/* Ensure the language selection menu popup iframe remains fully visible and clickable (legacy fallback support) */
+iframe.goog-te-menu-frame,
+.goog-te-menu-frame {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  box-shadow: var(--shadow-lg) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+/* Custom Flag Language Dropdown styling */
+.lang-selector-container {
+  position: relative;
+  display: inline-block;
+}
+
+.lang-selector-btn {
+  background-color: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.lang-selector-btn:hover {
+  border-color: var(--color-accent-gold);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.lang-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background-color: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  width: 150px;
+  z-index: 1001;
+  padding: 0.4rem 0;
+  display: flex;
+  flex-direction: column;
+  animation: langSlideDown 0.2s ease;
+}
+
+.lang-dropdown-item {
+  padding: 0.5rem 0.85rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.lang-dropdown-item:hover {
+  background-color: var(--color-bg-light);
+  color: var(--color-primary);
+}
+
+.lang-dropdown-item.active {
+  background-color: rgba(15, 44, 89, 0.05);
+  color: var(--color-primary);
+}
+
+@keyframes langSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+

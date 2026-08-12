@@ -10,7 +10,7 @@ export default function Footer() {
 
           {/* Brand Info */}
           <div className="footer-brand">
-            <h3>LPK <span>JEPANG</span></h3>
+            <h3>LPK <span>KIYORAKA GLOBAL</span></h3>
             <p>
               Lembaga Pelatihan Kerja resmi terpercaya. Menyiapkan generasi muda unggul, kompeten, berkarakter, dan disiplin tinggi untuk berkarir sukses di Jepang.
             </p>
@@ -40,15 +40,15 @@ export default function Footer() {
             <div style={{ marginTop: '1rem' }}>
               <div className="footer-contact-item">
                 <MapPin className="footer-contact-icon" />
-                <span>Jl. Sakura No. 12, Kebayoran Baru, Jakarta Selatan, DKI Jakarta 12130</span>
+                <span>Jl. Ciganitri No.80 Ds.Lengkong Kec.Bojongsoang Kab.Bandung, Bandung 40287</span>
               </div>
               <div className="footer-contact-item">
                 <Phone className="footer-contact-icon" />
-                <span>+62 812-3456-7890</span>
+                <span>+6285121541774</span>
               </div>
               <div className="footer-contact-item">
                 <Mail className="footer-contact-icon" />
-                <span>info@lpkjepangresmi.co.id</span>
+                <span>kiyorakaglobal@gmail.com</span>
               </div>
             </div>
 

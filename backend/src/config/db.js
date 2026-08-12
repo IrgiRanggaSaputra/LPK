@@ -116,10 +116,24 @@ const createTables = async () => {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `;
 
+  // Testimonials table schema
+  const testimonialsTable = `
+    CREATE TABLE IF NOT EXISTS testimonials (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      city VARCHAR(255) NOT NULL,
+      program VARCHAR(255) NOT NULL,
+      quote TEXT NOT NULL,
+      avatar VARCHAR(255),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `;
+
   try {
     await dbPool.query(usersTable);
     await dbPool.query(registrationsTable);
     await dbPool.query(newsTable);
+    await dbPool.query(testimonialsTable);
     console.log('✅ MySQL tables checked and verified.');
 
     // Seed default admin user if users table is empty
@@ -164,6 +178,43 @@ const createTables = async () => {
         );
       }
       console.log('✅ MySQL seeding complete.');
+    }
+
+    // Seed dummy testimonials if table is empty
+    const [testiCountRows] = await dbPool.query('SELECT COUNT(*) as count FROM testimonials');
+    if (testiCountRows[0].count === 0) {
+      console.log('📝 Seeding initial testimonials data into MySQL...');
+      const sampleTestimonials = [
+        {
+          name: "Ahmad Fauzi",
+          city: "Tokyo, Jepang",
+          program: "Alumni Magang Otomotif (2024)",
+          quote: "Sangat bersyukur belajar di LPK ini. Pelatihan bahasa dan disiplin fisiknya keras tapi itu yang membuat saya bisa langsung adaptasi dengan cepat di pabrik Tokyo. Gaji lancar dan fasilitas asrama sangat baik.",
+          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop"
+        },
+        {
+          name: "Rina Kartika",
+          city: "Osaka, Jepang",
+          program: "Alumni Tokutei Ginou - Care Worker (2025)",
+          quote: "Program SSW Kaigo benar-benar mengubah hidup saya. Bimbingan LPK dari persiapan ujian JFT, ujian skill Kaigo, hingga pengurusan visa kerja di Osaka dibimbing sampai tuntas. Sekarang saya bisa bantu ekonomi keluarga di Indonesia.",
+          avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop"
+        },
+        {
+          name: "Dian Saputra",
+          city: "Nagoya, Jepang",
+          program: "Alumni Magang Pengolahan Makanan (2024)",
+          quote: "Pilihan terbaik bagi yang mau kerja ke Jepang secara resmi. Sensei di LPK sangat sabar membimbing tata bahasa dan Kaiwa sehari-hari. Dokumen transparan dan tidak ada pungli tersembunyi. Sukses terus untuk LPK!",
+          avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&auto=format&fit=crop"
+        }
+      ];
+
+      for (const item of sampleTestimonials) {
+        await dbPool.query(
+          `INSERT INTO testimonials (name, city, program, quote, avatar) VALUES (?, ?, ?, ?, ?)`,
+          [item.name, item.city, item.program, item.quote, item.avatar]
+        );
+      }
+      console.log('✅ MySQL testimonials seeding complete.');
     }
   } catch (error) {
     console.error('❌ Failed to verify/create tables in MySQL:', error.message);

@@ -3,42 +3,52 @@
    ========================================================================== */
 :root {
   /* Colors */
-  --color-primary: #0F2C59;       /* Deep Navy Blue - Professional & Trustworthy */
-  --color-primary-dark: #081B3B;  /* Darker Navy */
-  --color-primary-light: #1A3E75; /* Lighter Navy */
-  --color-accent-red: #D80032;    /* Japanese Crimson - Accent & Energy */
+  --color-primary: #0F2C59;
+  /* Deep Navy Blue - Professional & Trustworthy */
+  --color-primary-dark: #081B3B;
+  /* Darker Navy */
+  --color-primary-light: #1A3E75;
+  /* Lighter Navy */
+  --color-accent-red: #D80032;
+  /* Japanese Crimson - Accent & Energy */
   --color-accent-red-hover: #B00028;
-  --color-accent-gold: #C5A880;   /* Muted Gold - Success & Prestige */
+  --color-accent-gold: #C5A880;
+  /* Muted Gold - Success & Prestige */
   --color-accent-gold-light: #E8DFD3;
   --color-bg-white: #FFFFFF;
-  --color-bg-light: #F8F9FA;      /* Off-White / Soft Gray */
-  --color-bg-alt: #F1F4F9;        /* Light Slate Blue/Gray */
-  --color-text-dark: #1E293B;     /* Deep Slate for high legibility */
-  --color-text-muted: #64748B;    /* Gray for labels/descriptions */
+  --color-bg-light: #F8F9FA;
+  /* Off-White / Soft Gray */
+  --color-bg-alt: #F1F4F9;
+  /* Light Slate Blue/Gray */
+  --color-text-dark: #1E293B;
+  /* Deep Slate for high legibility */
+  --color-text-muted: #64748B;
+  /* Gray for labels/descriptions */
   --color-border: #E2E8F0;
-  --color-success: #10B981;       /* WhatsApp/Success Green */
-  
+  --color-success: #10B981;
+  /* WhatsApp/Success Green */
+
   /* Typography */
   --font-family: 'Outfit', 'Noto Sans JP', sans-serif;
-  
+
   /* Layout & Spacing */
   --container-max-width: 1200px;
   --section-padding: 5rem 1.5rem;
   --section-padding-mobile: 3.5rem 1rem;
-  
+
   /* Shadows */
   --shadow-sm: 0 2px 4px rgba(15, 44, 89, 0.05);
   --shadow-md: 0 10px 20px rgba(15, 44, 89, 0.08);
   --shadow-lg: 0 20px 40px rgba(15, 44, 89, 0.12);
   --shadow-gold: 0 10px 25px rgba(197, 168, 128, 0.25);
   --shadow-red: 0 10px 25px rgba(216, 0, 50, 0.25);
-  
+
   /* Border Radii */
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 20px;
   --radius-full: 9999px;
-  
+
   /* Transitions */
   --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -48,7 +58,9 @@
 /* ==========================================================================
    GLOBAL RESET & STYLES
    ========================================================================== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -74,7 +86,10 @@ a {
   transition: var(--transition-normal);
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: inherit;
 }
 
@@ -92,8 +107,13 @@ img {
    ANIMATIONS
    ========================================================================== */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
@@ -101,6 +121,7 @@ img {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -108,21 +129,45 @@ img {
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 @keyframes pulseGlow {
-  0% { box-shadow: 0 0 0 0 rgba(216, 0, 50, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(216, 0, 50, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(216, 0, 50, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(216, 0, 50, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(216, 0, 50, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(216, 0, 50, 0);
+  }
 }
 
 @keyframes pulseWhatsApp {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-  70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
 }
 
 .animate-fade-in {
@@ -275,4 +320,42 @@ img {
   background-color: #b59870;
   transform: translateY(-3px);
   color: var(--color-bg-white);
+}
+
+/* ==========================================================================
+   GLOBAL GOOGLE TRANSLATE BANNER & TOOLTIP OVERRIDES
+   ========================================================================== */
+/* 1. Sembunyikan iframe banner (versi lama & versi terbaru Google) */
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner,
+iframe.goog-te-banner-frame,
+iframe.goog-te-banner,
+iframe.skiptranslate,
+.VIpgm-bL-Prs-jms-v2 {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/* 2. Paksa body dan html tetap berada di posisi paling atas */
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+html {
+  margin-top: 0px !important;
+}
+
+/* 3. Sembunyikan tooltip pop-up & efek highlight teks saat dikursorkan */
+#goog-gt-tt,
+.goog-tooltip,
+.goog-tooltip:hover,
+.goog-text-highlight {
+  display: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
 }

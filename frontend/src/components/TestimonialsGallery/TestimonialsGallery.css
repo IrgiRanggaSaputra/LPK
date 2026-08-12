@@ -1,10 +1,32 @@
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.testi-marquee-container {
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  position: relative;
+  padding: 2.5rem 0;
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 10%, rgb(0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 10%, rgb(0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
+}
+
+.testi-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: scrollLeft 35s linear infinite;
+}
+
+.testi-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.testi-marquee-group {
+  display: flex;
   gap: 2rem;
+  padding-right: 2rem;
 }
 
 .testi-card {
+  width: 380px;
+  flex-shrink: 0;
   background-color: var(--color-bg-white);
   border-radius: var(--radius-md);
   padding: 2rem;
@@ -19,6 +41,22 @@
   transform: translateY(-5px);
   box-shadow: var(--shadow-lg);
   border-color: var(--color-accent-gold);
+}
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 576px) {
+  .testi-card {
+    width: 290px;
+    padding: 1.5rem;
+  }
 }
 
 .testi-quote {
@@ -67,8 +105,4 @@
   color: var(--color-text-muted);
 }
 
-@media (max-width: 992px) {
-  .testimonials-grid {
-    grid-template-columns: 1fr;
-  }
-}
+

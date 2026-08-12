@@ -485,15 +485,16 @@ export default function RegistrationForm({ selectedProgram, onProgramChange }) {
 
                       {/* Desired Job */}
                       <div className="form-group">
-                        <label className="form-label" htmlFor="desired_job">Job / Pekerjaan yang Diinginkan</label>
+                        <label className="form-label" htmlFor="desired_job">Job / Program yang Diinginkan</label>
                         <select 
                           id="desired_job" name="desired_job" 
                           value={formData.desired_job} onChange={handleChange}
                           className="form-control" required
                         >
-                          <option value="">-- Pilih Job --</option>
-                          <option value="Ginou Jisshusei (Magang)">Ginou Jisshusei (Magang Kerja)</option>
-                          <option value="Tokutei Ginou (SSW)">Tokutei Ginou (Kerja Keahlian Khusus)</option>
+                          <option value="">-- Pilih Program --</option>
+                          <option value="Pemagangan Jepang">Pemagangan Jepang (Ginou Jisshusei)</option>
+                          <option value="Persiapan JLPT">Persiapan JLPT (Bahasa Jepang Umum)</option>
+                          <option value="Persiapan JFT Basic">Persiapan JFT Basic (Tokutei Ginou / SSW)</option>
                         </select>
                       </div>
                     </div>

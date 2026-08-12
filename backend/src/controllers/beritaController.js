@@ -61,7 +61,13 @@ export const createNews = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Kategori berita wajib dipilih.' });
     }
     
-    const cleanImageUrl = image_url && image_url.trim() ? image_url.trim() : 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=600';
+    let cleanImageUrl = image_url && image_url.trim() ? image_url.trim() : 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=600';
+    
+    // If a file was uploaded, use its path
+    if (req.file) {
+      const filePath = req.file.path.replace(/\\/g, '/');
+      cleanImageUrl = `http://localhost:5000/${filePath}`;
+    }
 
     const db = getDb();
     const [result] = await db.execute(
@@ -115,7 +121,13 @@ export const updateNews = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Kategori berita wajib dipilih.' });
     }
 
-    const cleanImageUrl = image_url && image_url.trim() ? image_url.trim() : article.image_url;
+    let cleanImageUrl = image_url && image_url.trim() ? image_url.trim() : article.image_url;
+
+    // If a file was uploaded, use its path
+    if (req.file) {
+      const filePath = req.file.path.replace(/\\/g, '/');
+      cleanImageUrl = `http://localhost:5000/${filePath}`;
+    }
 
     await db.execute(
       `UPDATE news SET title = ?, content = ?, category = ?, image_url = ? WHERE id = ?`,
