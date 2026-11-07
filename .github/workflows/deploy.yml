@@ -19,9 +19,13 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
+          script_stop: true
           script: |
-            cd ~/LPK
-            git pull origin main
-            docker compose up -d --build
+            set -e
+            cd /home/ubuntu/LPK
+            git config --global --add safe.directory /home/ubuntu/LPK
+            git fetch origin main
+            git reset --hard origin/main
+            docker compose down
+            docker compose up -d --build --force-recreate
             docker image prune -f
-
