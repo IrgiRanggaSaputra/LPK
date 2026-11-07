@@ -29,10 +29,23 @@ export const initDb = async () => {
       queueLimit: 0
     });
 
-    // Test the database connection
-    const connection = await dbPool.getConnection();
-    console.log(`✅ MySQL Database Connected successfully to: ${process.env.DB_NAME || 'lpk'}`);
-    connection.release();
+    // Test the database connection with retry mechanism for Docker initialization
+    let retries = 10;
+    while (retries > 0) {
+      try {
+        const connection = await dbPool.getConnection();
+        console.log(`✅ MySQL Database Connected successfully to: ${process.env.DB_NAME || 'lpk'}`);
+        connection.release();
+        break;
+      } catch (err) {
+        retries -= 1;
+        if (retries === 0) {
+          throw err;
+        }
+        console.log(`⏳ Database not ready yet (${err.message}), retrying in 3 seconds... (${retries} attempts left)`);
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
+    }
 
     // Check if the old structure exists, if so rebuild it for advanced form fields
     let rebuildRegistrations = false;

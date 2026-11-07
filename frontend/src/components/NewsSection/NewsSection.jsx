@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, User, BookOpen, X } from 'lucide-react';
+import { API_BASE_URL, getMediaUrl } from '../../config/api';
 import './NewsSection.css';
 
 export default function NewsSection() {
@@ -14,7 +15,7 @@ export default function NewsSection() {
   const fetchNews = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/berita');
+      const response = await fetch(`${API_BASE_URL}/api/berita`);
       const result = await response.json();
       if (response.ok && result.success) {
         setNews(result.data);
@@ -59,7 +60,7 @@ export default function NewsSection() {
         <div className="news-grid">
           {news.map((item) => (
             <div key={item.id} className="news-card animate-slide-up">
-              <img src={item.image_url} alt={item.title} className="news-card-img" />
+              <img src={getMediaUrl(item.image_url)} alt={item.title} className="news-card-img" />
               <div className="news-card-body">
                 <span className="news-card-tag">{item.category}</span>
                 <h3 className="news-card-title">{item.title}</h3>
@@ -119,7 +120,7 @@ export default function NewsSection() {
             {/* Modal Image Header */}
             <div style={{ position: 'relative', height: '240px', overflow: 'hidden' }}>
               <img 
-                src={selectedArticle.image_url} 
+                src={getMediaUrl(selectedArticle.image_url)} 
                 alt={selectedArticle.title} 
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />

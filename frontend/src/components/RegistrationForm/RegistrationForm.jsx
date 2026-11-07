@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Send, CheckCircle2, RefreshCw, ArrowRight, ArrowLeft, Upload, Paperclip } from 'lucide-react';
+import { API_BASE_URL } from '../../config/api';
 import './RegistrationForm.css';
 
 export default function RegistrationForm({ selectedProgram, onProgramChange }) {
@@ -137,7 +138,7 @@ export default function RegistrationForm({ selectedProgram, onProgramChange }) {
     if (certFile) data.append('certificate_photo', certFile);
 
     try {
-      const response = await fetch('http://localhost:5000/api/daftar', {
+      const response = await fetch(`${API_BASE_URL}/api/daftar`, {
         method: 'POST',
         body: data
       });

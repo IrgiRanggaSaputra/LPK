@@ -68,7 +68,8 @@ export const createTestimonial = async (req, res, next) => {
     // If an avatar file was uploaded
     if (req.file) {
       const filePath = req.file.path.replace(/\\/g, '/');
-      finalAvatar = `http://localhost:5000/${filePath}`;
+      const baseUrl = process.env.BASE_URL !== undefined ? process.env.BASE_URL : (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+      finalAvatar = baseUrl ? `${baseUrl}/${filePath}` : `/${filePath}`;
     }
 
     const db = getDb();
@@ -130,7 +131,8 @@ export const updateTestimonial = async (req, res, next) => {
 
     if (req.file) {
       const filePath = req.file.path.replace(/\\/g, '/');
-      finalAvatar = `http://localhost:5000/${filePath}`;
+      const baseUrl = process.env.BASE_URL !== undefined ? process.env.BASE_URL : (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+      finalAvatar = baseUrl ? `${baseUrl}/${filePath}` : `/${filePath}`;
     }
 
     await db.execute(

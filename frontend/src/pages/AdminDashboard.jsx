@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoImg from '../images/kiyoraka.png';
+import { API_BASE_URL, getMediaUrl } from '../config/api';
 import {
   Newspaper,
   Users,
@@ -109,7 +110,7 @@ export default function AdminDashboard() {
   const fetchNews = async () => {
     setNewsLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/berita');
+      const response = await fetch(`${API_BASE_URL}/api/berita`);
       const result = await response.json();
       if (response.ok && result.success) {
         setNewsList(result.data);
@@ -149,8 +150,8 @@ export default function AdminDashboard() {
     try {
       const isEdit = editingId !== null;
       const url = isEdit
-        ? `http://localhost:5000/api/berita/${editingId}`
-        : 'http://localhost:5000/api/berita';
+        ? `${API_BASE_URL}/api/berita/${editingId}`
+        : `${API_BASE_URL}/api/berita`;
 
       const method = isEdit ? 'PUT' : 'POST';
 
@@ -227,7 +228,7 @@ export default function AdminDashboard() {
     if (!window.confirm('Apakah Anda yakin ingin menghapus berita ini?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/berita/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/berita/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders()
       });
@@ -257,7 +258,7 @@ export default function AdminDashboard() {
   const fetchTestimonials = async () => {
     setTestimonialsLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/testimoni');
+      const response = await fetch(`${API_BASE_URL}/api/testimoni`);
       const result = await response.json();
       if (response.ok && result.success) {
         setTestimonialsList(result.data);
@@ -297,8 +298,8 @@ export default function AdminDashboard() {
     try {
       const isEdit = editingTestimonialId !== null;
       const url = isEdit
-        ? `http://localhost:5000/api/testimoni/${editingTestimonialId}`
-        : 'http://localhost:5000/api/testimoni';
+        ? `${API_BASE_URL}/api/testimoni/${editingTestimonialId}`
+        : `${API_BASE_URL}/api/testimoni`;
 
       const method = isEdit ? 'PUT' : 'POST';
 
@@ -377,7 +378,7 @@ export default function AdminDashboard() {
     if (!window.confirm('Apakah Anda yakin ingin menghapus testimoni ini?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/testimoni/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/testimoni/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders()
       });
@@ -407,7 +408,7 @@ export default function AdminDashboard() {
   const fetchRegistrants = async () => {
     setRegistrantsLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/pendaftar', {
+      const response = await fetch(`${API_BASE_URL}/api/pendaftar`, {
         headers: getAuthHeaders()
       });
 
@@ -435,7 +436,7 @@ export default function AdminDashboard() {
   const handleExportCsv = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5000/api/pendaftar/export/csv', {
+      const response = await fetch(`${API_BASE_URL}/api/pendaftar/export/csv`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -470,9 +471,9 @@ export default function AdminDashboard() {
       return;
     }
 
-    const ijazahUrl = candidate.ijazah_photo ? `http://localhost:5000/${candidate.ijazah_photo}` : '';
-    const simUrl = candidate.sim_a_photo ? `http://localhost:5000/${candidate.sim_a_photo}` : '';
-    const certUrl = candidate.certificate_photo ? `http://localhost:5000/${candidate.certificate_photo}` : '';
+    const ijazahUrl = candidate.ijazah_photo ? getMediaUrl(candidate.ijazah_photo) : '';
+    const simUrl = candidate.sim_a_photo ? getMediaUrl(candidate.sim_a_photo) : '';
+    const certUrl = candidate.certificate_photo ? getMediaUrl(candidate.certificate_photo) : '';
 
     printWindow.document.write(`
       <html>
@@ -801,7 +802,7 @@ export default function AdminDashboard() {
                 <div className="admin-news-list">
                   {newsList.map((article) => (
                     <div key={article.id} className="admin-news-item">
-                      <img src={article.image_url} alt={article.title} className="admin-news-img" />
+                      <img src={getMediaUrl(article.image_url)} alt={article.title} className="admin-news-img" />
                       <div className="admin-news-details">
                         <span className="admin-news-cat">{article.category}</span>
                         <h4 className="admin-news-title">{article.title}</h4>
@@ -1080,7 +1081,7 @@ export default function AdminDashboard() {
                 <div className="admin-news-list">
                   {testimonialsList.map((testi) => (
                     <div key={testi.id} className="admin-news-item">
-                      <img src={testi.avatar} alt={testi.name} className="admin-news-img" style={{ borderRadius: '50%', width: '70px', height: '70px' }} />
+                      <img src={getMediaUrl(testi.avatar)} alt={testi.name} className="admin-news-img" style={{ borderRadius: '50%', width: '70px', height: '70px' }} />
                       <div className="admin-news-details">
                         <span className="admin-news-cat">{testi.city}</span>
                         <h4 className="admin-news-title" style={{ margin: 0 }}>{testi.name}</h4>
@@ -1194,7 +1195,7 @@ export default function AdminDashboard() {
                       <tr>
                         <td style={{ fontWeight: 'bold', padding: '6px 0', color: '#64748b' }}>Dokumen Ijazah</td>
                         <td style={{ padding: '6px 0' }}>
-                          <a href={`http://localhost:5000/${selectedRegistrant.ijazah_photo}`} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'none' }}>
+                          <a href={getMediaUrl(selectedRegistrant.ijazah_photo)} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'none' }}>
                             <Download size={14} />
                             Unduh / Lihat File
                           </a>
@@ -1205,7 +1206,7 @@ export default function AdminDashboard() {
                         <tr>
                           <td style={{ fontWeight: 'bold', padding: '6px 0', color: '#64748b' }}>Dokumen SIM A</td>
                           <td style={{ padding: '6px 0' }}>
-                            <a href={`http://localhost:5000/${selectedRegistrant.sim_a_photo}`} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'none' }}>
+                            <a href={getMediaUrl(selectedRegistrant.sim_a_photo)} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'none' }}>
                               <Download size={14} />
                               Unduh / Lihat File
                             </a>
@@ -1224,7 +1225,7 @@ export default function AdminDashboard() {
                         <tr>
                           <td style={{ fontWeight: 'bold', padding: '6px 0', color: '#64748b' }}>Dokumen Sertifikat</td>
                           <td style={{ padding: '6px 0' }}>
-                            <a href={`http://localhost:5000/${selectedRegistrant.certificate_photo}`} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'none' }}>
+                            <a href={getMediaUrl(selectedRegistrant.certificate_photo)} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'none' }}>
                               <Download size={14} />
                               Unduh / Lihat File
                             </a>

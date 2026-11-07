@@ -66,7 +66,8 @@ export const createNews = async (req, res, next) => {
     // If a file was uploaded, use its path
     if (req.file) {
       const filePath = req.file.path.replace(/\\/g, '/');
-      cleanImageUrl = `http://localhost:5000/${filePath}`;
+      const baseUrl = process.env.BASE_URL !== undefined ? process.env.BASE_URL : (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+      cleanImageUrl = baseUrl ? `${baseUrl}/${filePath}` : `/${filePath}`;
     }
 
     const db = getDb();
@@ -126,7 +127,8 @@ export const updateNews = async (req, res, next) => {
     // If a file was uploaded, use its path
     if (req.file) {
       const filePath = req.file.path.replace(/\\/g, '/');
-      cleanImageUrl = `http://localhost:5000/${filePath}`;
+      const baseUrl = process.env.BASE_URL !== undefined ? process.env.BASE_URL : (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+      cleanImageUrl = baseUrl ? `${baseUrl}/${filePath}` : `/${filePath}`;
     }
 
     await db.execute(

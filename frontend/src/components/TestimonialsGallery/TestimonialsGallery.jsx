@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL, getMediaUrl } from '../../config/api';
 import './TestimonialsGallery.css';
 
 const DEFAULT_TESTIMONIALS = [
@@ -36,7 +37,7 @@ export default function TestimonialsGallery() {
   const fetchTestimonials = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/testimoni');
+      const response = await fetch(`${API_BASE_URL}/api/testimoni`);
       const result = await response.json();
       if (response.ok && result.success && result.data.length > 0) {
         setTestimonials(result.data);
@@ -81,7 +82,7 @@ export default function TestimonialsGallery() {
                   </div>
                   <div className="testi-profile">
                     <img 
-                      src={testi.avatar} 
+                      src={getMediaUrl(testi.avatar)} 
                       alt={testi.name} 
                       className="testi-avatar"
                     />
@@ -104,7 +105,7 @@ export default function TestimonialsGallery() {
                   </div>
                   <div className="testi-profile">
                     <img 
-                      src={testi.avatar} 
+                      src={getMediaUrl(testi.avatar)} 
                       alt={testi.name} 
                       className="testi-avatar"
                     />
