@@ -12,7 +12,7 @@ export default function Header() {
   // Language state and dropdown visibility
   const [lang, setLang] = useState('id');
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-
+  //bahasa
   const languages = [
     { code: 'id', name: 'Indonesian', flag: 'ID', googtrans: '/id/id' },
     { code: 'en', name: 'English', flag: 'EN', googtrans: '/id/en' },
